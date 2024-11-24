@@ -6,27 +6,24 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
-@EqualsAndHashCode
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+@EqualsAndHashCode
+@Entity
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String name;
-
-    @Column(unique = true)
-    private Long categoryId;
-
     @ManyToOne
-    private Category parentCategory;
+    private User customer;
+    @OneToOne
+    private Order order;
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
 
-    private Integer level;
-
-    private String description;
-    private boolean active = true;
-
+    private LocalDateTime transactionDate= LocalDateTime.now();
 }

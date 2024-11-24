@@ -1,4 +1,5 @@
 package com.wesp.response;
 
-public class ApiResponse {
+
+public record ApiResponse(String message){
 }

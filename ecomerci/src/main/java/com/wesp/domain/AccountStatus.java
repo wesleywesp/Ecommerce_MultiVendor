@@ -1,4 +1,4 @@
-package com.wesp.model;
+package com.wesp.domain;
 
 public enum AccountStatus {
     PENDING_VERIFICATION, // This is the default status when a new account is created

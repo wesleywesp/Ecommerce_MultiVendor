@@ -6,27 +6,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Data
 @EqualsAndHashCode
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class Wishlist {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    private String name;
-
-    @Column(unique = true)
-    private Long categoryId;
-
-    @ManyToOne
-    private Category parentCategory;
-
-    private Integer level;
-
-    private String description;
-    private boolean active = true;
-
+    @OneToOne
+    private User user;
+    @ManyToMany
+    private Set<Product> products= new HashSet<>();
 }

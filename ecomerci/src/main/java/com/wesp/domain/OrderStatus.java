@@ -1,7 +1,9 @@
-package com.wesp.model;
+package com.wesp.domain;
 
 public enum OrderStatus {
-    ORDERED,
+    PENDING,
+    PLACED,
+    CONFIRMED,
     SHIPPED,
     DELIVERED,
     CANCELLED

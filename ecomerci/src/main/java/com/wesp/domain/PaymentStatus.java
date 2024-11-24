@@ -1,4 +1,13 @@
-package com.wesp.model;
+package com.wesp.domain;
 
-public Enum paymentStatus (){
+public enum PaymentStatus {
+        PENDING,
+        PROCESSING,
+        DECLINED,
+        COMPLETED,
+        REFUNDED,
+        CANCELLED,
+        FAILED;
+
+
 }

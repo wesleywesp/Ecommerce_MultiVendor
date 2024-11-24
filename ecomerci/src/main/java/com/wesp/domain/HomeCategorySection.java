@@ -1,0 +1,15 @@
+package com.wesp.domain;
+
+public enum HomeCategorySection {
+    GRID,
+    SHOP_BY_CATEGORIES,
+    DEALS,
+    DEALS_OF_THE_DAY,
+    TOYS_AND_GAMES,
+    ELECTRONICS_CATEGORiES,
+//    ELECTRONICS_COMPUTERS,
+//    ELECTRONICS_MOBILE,
+//    ELECTRONICS_TV,
+//    ELECTRONICS_APPLIANCES,
+
+}
