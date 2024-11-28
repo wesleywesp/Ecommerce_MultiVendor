@@ -60,6 +60,7 @@ public class Seller {
     @Enumerated(EnumType.STRING)
     private AccountStatus accountStatus = AccountStatus.PENDING_VERIFICATION;
 
+
     @PrePersist
     public void prePersist() {
         this.isActive = true;

@@ -50,7 +50,7 @@ public class AuthController {
 
 
     }
-    @PostMapping("/singninp")
+    @PostMapping("/singning")
     @Transactional
     public ResponseEntity<AuthResponse> loginHandler(@RequestBody LoginRequestDTO req) {
         AuthResponse res = authService.siging(req);

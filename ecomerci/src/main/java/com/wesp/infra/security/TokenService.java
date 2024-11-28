@@ -40,9 +40,12 @@ public class TokenService {
                     .withClaim("authorities", roles)
                     .withExpiresAt(getExpiration())
                     .sign(algorithm);
-        } catch (JWTCreationException exception){
-            throw new RuntimeException("Error to create token" + exception.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new RuntimeException("Parâmetros inválidos ao criar o token: " + e.getMessage(), e);
+        } catch (JWTCreationException e) {
+            throw new RuntimeException("Erro ao criar token JWT: " + e.getMessage(), e);
         }
+
     }
 
     private String populateAuthorities(Collection<? extends GrantedAuthority> authorities) {
@@ -58,7 +61,10 @@ public class TokenService {
 
 
     public String getSubject(String tokenJwt) {
-        try {
+        if (tokenJwt.startsWith("Bearer ")) {
+            tokenJwt = tokenJwt.substring(7); // Remove "Bearer "
+        }
+            try {
             var algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
                     .withIssuer(headerString)
@@ -84,4 +90,5 @@ public class TokenService {
             throw new RuntimeException("Error to verify token" + exception.getMessage());
         }
     }
+
 }
