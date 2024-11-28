@@ -66,5 +66,6 @@ public class Seller {
         this.isEmailVerified = false;
         this.accountStatus = AccountStatus.PENDING_VERIFICATION;
     }
+
 }
 

@@ -3,6 +3,7 @@ package com.wesp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wesp.domain.USER_ROLE;
+import com.wesp.request.SignupRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,4 +37,12 @@ public class User {
     @ManyToMany
     @JsonIgnore
     private Set<Coupon> usedCoupons= new HashSet<>();
+
+    public User(SignupRequestDTO req, String password) {
+        this.email = req.email();
+        this.name = req.name();
+        this.lastName = req.lastname();
+        this.password = password;
+        this.phone = req.phone();
+    }
 }
