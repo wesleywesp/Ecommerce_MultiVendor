@@ -32,5 +32,8 @@ public class Address {
     private String codePostal;
 
     private String phone;
+    @ManyToOne
+    @JoinColumn(name = "user_id") // Nome da coluna no banco de dados
+    private User user;
 
 }

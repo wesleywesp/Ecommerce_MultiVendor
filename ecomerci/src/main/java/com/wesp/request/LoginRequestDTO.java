@@ -1,4 +1,11 @@
 package com.wesp.request;
 
-public record LoginRequestDTO(String email, String password, String otp) {
+import lombok.Data;
+
+@Data
+public class LoginRequestDTO{
+    private String email;
+    private String password;
+    private String otp;
+
 }

@@ -56,7 +56,8 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public Seller getSellerById(Long id) {
-        return null;
+        Seller seller =sellerRepository.findById(id).orElseThrow(() -> new BadCredentialsException("Seller not found with id: " + id));
+        return seller;
     }
 
     @Override
@@ -67,31 +68,115 @@ public class SellerServiceImpl implements SellerService {
 
     @Override
     public List<Seller> getAllSellers(AccountStatus status) {
-        return List.of();
+
+        return sellerRepository.findByAccountStatusAndIsActiveIsTrue(status);
     }
 
     @Override
     public Seller updateSeller(Long id, Seller seller) {
-        return null;
+        Seller sellerexists = sellerRepository.findById(id).orElseThrow(() -> new BadCredentialsException("Seller not found with id: " + id));
+    if(seller.getSellerName()!=null){
+        sellerexists.setSellerName(seller.getSellerName());
+    }
+    if(seller.getSellerPhone()!=null){
+        sellerexists.setSellerPhone(seller.getSellerPhone());
+    }
+    if(seller.getEmail()!=null){
+        sellerexists.setEmail(seller.getEmail());
+    }
+    if(seller.getGSTIN()!=null){
+        sellerexists.setGSTIN(seller.getGSTIN());
+    }
+    if(seller.getBankDetails()!=null
+            && seller.getBankDetails().getIfscCode()!=null
+            && seller.getBankDetails().getBankName()!=null
+            && seller.getBankDetails().getAccountNumber()!=null
+            && seller.getBankDetails().getAccountHolderName()!=null
+    )
+    {
+        sellerexists.getBankDetails().setBankName(
+                seller.getBankDetails().getBankName());
+        sellerexists.getBankDetails().setAccountHolderName(
+                seller.getBankDetails().getAccountHolderName());
+        sellerexists.getBankDetails().setAccountNumber(
+                seller.getBankDetails().getAccountNumber());
+        sellerexists.getBankDetails().setIfscCode(
+                seller.getBankDetails().getIfscCode());
+    }
+    if(seller.getBusinessDetails()!=null
+            && seller.getBusinessDetails().getBusinessName()!=null
+            && seller.getBusinessDetails().getBusinessEmail()!=null
+            && seller.getBusinessDetails().getBusinessPhone()!=null
+            && seller.getBusinessDetails().getBusinessAddress()!=null
+            && seller.getBusinessDetails().getLogo()!=null
+            && seller.getBusinessDetails().getBanner()!=null){
+
+        sellerexists.getBusinessDetails().setBusinessName(
+                seller.getBusinessDetails().getBusinessName());
+        sellerexists.getBusinessDetails().setBusinessEmail(seller.getBusinessDetails().getBusinessEmail());
+        sellerexists.getBusinessDetails().setBusinessPhone(seller.getBusinessDetails().getBusinessPhone());
+        sellerexists.getBusinessDetails().setBusinessAddress(seller.getBusinessDetails().getBusinessAddress());
+        sellerexists.getBusinessDetails().setLogo(seller.getBusinessDetails().getLogo());
+        sellerexists.getBusinessDetails().setBanner(seller.getBusinessDetails().getBanner());
+    }
+    if(seller.getAccountStatus()!=null){
+        sellerexists.setAccountStatus(seller.getAccountStatus());
+    }
+    if(seller.getPickupAddress()!=null
+            && seller.getPickupAddress().getCity()!=null
+            && seller.getPickupAddress().getCodePostal()!=null
+            && seller.getPickupAddress().getCountry()!=null
+            && seller.getPickupAddress().getName()!=null
+            && seller.getPickupAddress().getPhone()!=null
+            && seller.getPickupAddress().getState()!=null
+            && seller.getPickupAddress().getStreet()!=null)
+    {
+
+        sellerexists.getPickupAddress().setCity(
+                seller.getPickupAddress().getCity());
+        sellerexists.getPickupAddress().setCodePostal(
+                seller.getPickupAddress().getCodePostal());
+        sellerexists.getPickupAddress().setCountry(
+                seller.getPickupAddress().getCountry());
+        sellerexists.getPickupAddress().setName(
+                seller.getPickupAddress().getName());
+        sellerexists.getPickupAddress().setPhone(
+                seller.getPickupAddress().getPhone());
+        sellerexists.getPickupAddress().setState(
+                seller.getPickupAddress().getState());
+        sellerexists.getPickupAddress().setStreet(
+                seller.getPickupAddress().getStreet());
+
+
+    }
+    return sellerRepository.save(sellerexists);
     }
 
     @Override
     public void deleteSeller(Long id) {
-
+        Seller seller = sellerRepository.findById(id).orElseThrow(() -> new BadCredentialsException("Seller not found with id: " + id));
+        seller.delete();
+        sellerRepository.save(seller);
     }
 
     @Override
     public Seller verifyEmail(String email, String otp) {
-        return null;
+        Seller seller = sellerRepository.findByEmail(email).orElseThrow(() -> new BadCredentialsException("Seller not found with email: " + email));
+        seller.setEmailVerified(true);
+        return sellerRepository.save(seller);
     }
 
     @Override
     public Seller updateSellerAccountStatus(Long sellerid, AccountStatus status) {
-        return null;
+        Seller seller = getSellerById(sellerid);
+        seller.setAccountStatus(status);
+        return sellerRepository.save(seller);
     }
 
     @Override
     public Seller updatepassword(Long id, String password) {
-        return null;
+        Seller seller = sellerRepository.findById(id).orElseThrow(() -> new BadCredentialsException("Seller not found with id: " + id));
+        seller.setPassword(passwordEncoder.encode(password));
+        return sellerRepository.save(seller);
     }
 }

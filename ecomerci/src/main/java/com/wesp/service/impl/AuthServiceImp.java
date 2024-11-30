@@ -96,12 +96,12 @@ public class AuthServiceImp implements AuthService {
 
     @Override
     public AuthResponse siging(LoginRequestDTO req) {
-        String username= req.email();
+        String username= req.getEmail();
         User user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
-        if(!passwordEncoder.matches(req.password(), user.getPassword())) {
+        if(!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
-        String otp = req.otp();
+        String otp = req.getOtp();
         Authentication authentication = authenticate(username, otp);
         
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);

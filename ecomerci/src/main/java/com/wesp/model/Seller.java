@@ -68,5 +68,9 @@ public class Seller {
         this.accountStatus = AccountStatus.PENDING_VERIFICATION;
     }
 
+    public void delete() {
+        this.isActive = false;
+        this.accountStatus = AccountStatus.DEACTIVATED;
+    }
 }
 
