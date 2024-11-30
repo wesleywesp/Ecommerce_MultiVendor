@@ -2,12 +2,13 @@ package com.wesp.service;
 
 import com.wesp.domain.AccountStatus;
 import com.wesp.model.Seller;
+import com.wesp.request.SellerRequestDTO;
 
 import java.util.List;
 
 public interface SellerService {
     Seller getSellerProfile(String jwtToken);
-    Seller createSellerProfile(Seller seller);
+    Seller createSellerProfile(SellerRequestDTO seller);
     Seller getSellerById(Long id);
     Seller getSellerByEmail(String email);
     List<Seller> getAllSellers(AccountStatus status);

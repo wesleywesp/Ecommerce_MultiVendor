@@ -1,6 +1,7 @@
 package com.wesp.model;
 
 
+import com.wesp.request.AddressRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -35,5 +36,15 @@ public class Address {
     @ManyToOne
     @JoinColumn(name = "user_id") // Nome da coluna no banco de dados
     private User user;
+
+    public Address(AddressRequestDTO addressRequestDTO) {
+        this.name = addressRequestDTO.name();
+        this.street = addressRequestDTO.street();
+        this.city = addressRequestDTO.city();
+        this.state = addressRequestDTO.state();
+        this.country = addressRequestDTO.country();
+        this.codePostal = addressRequestDTO.codePostal();
+        this.phone = addressRequestDTO.phone();
+    }
 
 }

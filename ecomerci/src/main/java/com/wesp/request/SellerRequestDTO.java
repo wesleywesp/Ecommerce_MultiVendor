@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wesp.domain.AccountStatus;
 import com.wesp.domain.USER_ROLE;
 import com.wesp.infra.anotaçãoDeValidação.UniqueEmail;
-import com.wesp.model.BankDetails;
 import com.wesp.model.BusinessDetails;
 import jakarta.validation.constraints.*;
 

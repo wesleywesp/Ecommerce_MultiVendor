@@ -4,9 +4,11 @@ import com.wesp.domain.AccountStatus;
 import com.wesp.domain.USER_ROLE;
 import com.wesp.infra.security.TokenService;
 import com.wesp.model.Address;
+import com.wesp.model.BankDetails;
 import com.wesp.model.Seller;
 import com.wesp.repository.AddressRepository;
 import com.wesp.repository.SellerRepository;
+import com.wesp.request.SellerRequestDTO;
 import com.wesp.service.SellerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,22 +34,24 @@ public class SellerServiceImpl implements SellerService {
     }
 
     @Override
-    public Seller createSellerProfile(Seller selle) {
+    public Seller createSellerProfile(SellerRequestDTO selle) {
 
-        Seller seller = sellerRepository.findByEmail(selle.getEmail()).orElse(null);
+        Seller seller = sellerRepository.findByEmail(selle.email()).orElse(null);
         if (seller != null) {
-            throw new BadCredentialsException("Seller already exists with email: " + selle.getEmail());
+            throw new BadCredentialsException("Seller already exists with email: " + selle.email());
         }
-        Address savedAddress = addressRepository.save(selle.getPickupAddress());
+        Address newAddress = new Address(selle.pickupAddress());
+        Address savedAddress = addressRepository.save(newAddress);
         Seller newSeller = new Seller();
-        newSeller.setSellerName(selle.getSellerName());
-        newSeller.setEmail(selle.getEmail());
-        newSeller.setPassword(passwordEncoder.encode(selle.getPassword()));
+        newSeller.setSellerName(selle.sellerName());
+        newSeller.setEmail(selle.email());
+        newSeller.setPassword(passwordEncoder.encode(selle.password()));
         newSeller.setPickupAddress(savedAddress);
-        newSeller.setSellerPhone(selle.getSellerPhone());
-        newSeller.setGSTIN(selle.getGSTIN());
-        newSeller.setBankDetails(selle.getBankDetails());
-        newSeller.setBusinessDetails(selle.getBusinessDetails());
+        newSeller.setSellerPhone(selle.sellerPhone());
+        newSeller.setGSTIN(selle.GSTIN());
+        BankDetails bankDetails = new BankDetails(selle.bankDetails());
+        newSeller.setBankDetails(bankDetails);
+        newSeller.setBusinessDetails(selle.businessDetails());
         newSeller.setRole(USER_ROLE.ROLE_SELLER);
 
         return sellerRepository.save(newSeller);

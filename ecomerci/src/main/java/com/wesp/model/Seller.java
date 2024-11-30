@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wesp.domain.AccountStatus;
 import com.wesp.domain.USER_ROLE;
 
+import com.wesp.request.BankDetailsRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

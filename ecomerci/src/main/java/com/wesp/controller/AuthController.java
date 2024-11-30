@@ -3,6 +3,7 @@ package com.wesp.controller;
 
 import com.wesp.domain.USER_ROLE;
 import com.wesp.model.VerificationCode;
+import com.wesp.request.LoginOtpRequest;
 import com.wesp.request.LoginRequestDTO;
 import com.wesp.request.SignupRequestDTO;
 import com.wesp.response.ApiResponse;
@@ -41,8 +42,9 @@ public class AuthController {
     }
     @PostMapping("/send/login-singnup-otp")
     @Transactional
-    public ResponseEntity<ApiResponse> sendOtpHandler(@RequestBody VerificationCode req) {
-       authService.sendLoginOtp(req.getEmail());
+    public ResponseEntity<ApiResponse> sendOtpHandler(@RequestBody LoginOtpRequest req) {
+
+       authService.sendLoginOtp(req.getEmail(), req.getRole());
         ApiResponse res = new ApiResponse("Otp sent successfully");
 
 

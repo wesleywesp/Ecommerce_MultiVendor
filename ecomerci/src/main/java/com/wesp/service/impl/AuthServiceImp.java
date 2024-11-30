@@ -3,9 +3,11 @@ package com.wesp.service.impl;
 import com.wesp.domain.USER_ROLE;
 import com.wesp.infra.security.TokenService;
 import com.wesp.model.Cart;
+import com.wesp.model.Seller;
 import com.wesp.model.User;
 import com.wesp.model.VerificationCode;
 import com.wesp.repository.CartRepository;
+import com.wesp.repository.SellerRepository;
 import com.wesp.repository.UserRepository;
 import com.wesp.repository.VerificationCodeRepository;
 import com.wesp.request.LoginRequestDTO;
@@ -41,14 +43,18 @@ public class AuthServiceImp implements AuthService {
     private final TokenService tokenService;
     private final VerificationCodeRepository verificationCodeRepository;
     private final CustumerServicerImpl custumerServicerImpl;
+    private final SellerRepository sellerRepository;
 
     @Override
-    public void sendLoginOtp(String email) {
+    public void sendLoginOtp(String email, USER_ROLE role) {
         String SIGIN_PREFIX = "signin_";
         if(email.startsWith(SIGIN_PREFIX)) {
             email = email.substring(SIGIN_PREFIX.length());
-
-            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+            if(role.equals(USER_ROLE.ROLE_SELLER)) {
+                Seller seller = sellerRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Seller not found"));
+            }else {
+                User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+            }
         }
         VerificationCode isExist = verificationCodeRepository.findByEmail(email);
         if(isExist != null) {
