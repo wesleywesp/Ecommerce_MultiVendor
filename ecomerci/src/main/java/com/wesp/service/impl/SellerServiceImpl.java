@@ -159,7 +159,13 @@ public class SellerServiceImpl implements SellerService {
     @Override
     public void deleteSeller(Long id) {
         Seller seller = sellerRepository.findById(id).orElseThrow(() -> new BadCredentialsException("Seller not found with id: " + id));
-        seller.delete();
+        sellerRepository.delete(seller);
+    }
+
+    @Override
+    public void desativaSeller(Long id) {
+        Seller seller = sellerRepository.findById(id).orElseThrow(() -> new BadCredentialsException("Seller not found with id: " + id));
+        seller.desativa();
         sellerRepository.save(seller);
     }
 

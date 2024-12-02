@@ -14,6 +14,7 @@ public interface SellerService {
     List<Seller> getAllSellers(AccountStatus status);
     Seller updateSeller(Long id, Seller seller);
     void deleteSeller(Long id);
+    void desativaSeller(Long id);
     Seller verifyEmail(String email, String otp);
     Seller updateSellerAccountStatus(Long sellerid, AccountStatus status);
 

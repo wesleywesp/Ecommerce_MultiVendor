@@ -1,7 +1,9 @@
 package com.wesp.controller;
 
 
+import com.wesp.domain.AccountStatus;
 import com.wesp.model.Seller;
+import com.wesp.model.SellerReport;
 import com.wesp.model.VerificationCode;
 import com.wesp.repository.VerificationCodeRepository;
 import com.wesp.request.LoginRequestDTO;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -74,6 +77,46 @@ public class SellerController {
         // Retornando a resposta
         return ResponseEntity.created(location).body(newSeller);
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Seller> getSellerById(@PathVariable Long id) {
+        Seller seller = sellerService.getSellerById(id);
+        return ResponseEntity.ok(seller);
+    }
+    @GetMapping("/profile")
+    public ResponseEntity<Seller> getSellerProfile(@RequestHeader("Authorization") String jwtToken) {
+        Seller seller = sellerService.getSellerProfile(jwtToken);
+        return ResponseEntity.ok(seller);
+    }
+
+//    @GetMapping("/report")
+//    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwtToken) {
+//        SellerReport sellerReport = sellerService.getSellerReport(jwtToken);
+//        return ResponseEntity.ok(sellerReport);
+//    }
+
+    @GetMapping
+    public ResponseEntity<List<Seller>> getAllSellers(@RequestParam(required = false) AccountStatus status) {
+        List<Seller> sellers = sellerService.getAllSellers(status);
+        return ResponseEntity.ok(sellers);
+    }
+
+    @PutMapping
+    public ResponseEntity<Seller> updateSeller(@RequestHeader("Authorization") String jwtToken, @RequestBody Seller seller) {
+        Seller profile = sellerService.getSellerProfile(jwtToken);
+        Seller updatedSeller = sellerService.updateSeller(profile.getId(), seller);
+        return ResponseEntity.ok(updatedSeller);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSeller(@PathVariable Long id) {
+        sellerService.desativaSeller(id);
+        return ResponseEntity.noContent().build();
+    }
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<Void> desativarSeller(@PathVariable Long id) {
+                sellerService.deleteSeller(id);
+        return ResponseEntity.noContent().build();
+    }
+
 
 
 
