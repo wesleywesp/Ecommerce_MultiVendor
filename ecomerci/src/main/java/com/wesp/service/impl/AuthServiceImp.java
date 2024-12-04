@@ -1,6 +1,7 @@
 package com.wesp.service.impl;
 
 import com.wesp.domain.USER_ROLE;
+import com.wesp.infra.exception.AutenficacaoException;
 import com.wesp.infra.security.TokenService;
 import com.wesp.model.Cart;
 import com.wesp.model.Seller;
@@ -16,6 +17,7 @@ import com.wesp.response.AuthResponse;
 import com.wesp.service.AuthService;
 import com.wesp.service.EmailService;
 import com.wesp.util.OtpUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +26,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,40 +50,60 @@ public class AuthServiceImp implements AuthService {
 
     @Override
     public void sendLoginOtp(String email, USER_ROLE role) {
-        String SIGIN_PREFIX = "signin_";
-        if(email.startsWith(SIGIN_PREFIX)) {
-            email = email.substring(SIGIN_PREFIX.length());
-            if(role.equals(USER_ROLE.ROLE_SELLER)) {
-                Seller seller = sellerRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("Seller not found"));
-            }else {
-                User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+        final String SIGNIN_PREFIX = "signin_";
+
+        // Remover prefixo "signin_" se presente
+        if (email.startsWith(SIGNIN_PREFIX)) {
+            email = email.substring(SIGNIN_PREFIX.length());
+        }
+
+        // Verificar se o usuário ou vendedor existe
+        boolean userExists;
+        if (role.equals(USER_ROLE.ROLE_SELLER)) {
+            userExists = sellerRepository.findByEmail(email).isPresent();
+            if (!userExists) {
+                throw new AutenficacaoException("Seller not found with email: " + email);
+            }
+        } else {
+            userExists = userRepository.findByEmail(email).isPresent();
+            if (!userExists) {
+                throw new AutenficacaoException("User not found with email: " + email);
             }
         }
-        VerificationCode isExist = verificationCodeRepository.findByEmail(email);
+
+        // Substituir código de verificação existente, se necessário
+       VerificationCode isExist= verificationCodeRepository.findByEmail(email);
         if(isExist != null) {
             verificationCodeRepository.delete(isExist);
         }
+
+        // Gerar novo OTP e salvar no banco
         String otp = OtpUtil.generateOtp();
         VerificationCode verificationCode = new VerificationCode();
         verificationCode.setOtp(otp);
         verificationCode.setEmail(email);
         verificationCodeRepository.save(verificationCode);
-        String subject = "Wesp ecomerci Login/signup";
-        String text = "your login/signup otp is - " + otp;
-        emailService.sendVerificationOtpEmail(email,otp,subject,text);
+
+        // Configurar email
+        String subject = "Wesp eCommerce Login/Signup OTP";
+        String text = "Your login/signup OTP is: " + otp;
+
+        // Enviar OTP via email
+        emailService.sendVerificationOtpEmail(email, otp, subject, text);
     }
+
 
     @Override
     public String createUser(SignupRequestDTO req) {
 
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(req.email());
         if(verificationCode == null || !verificationCode.getOtp().equals(req.otp())) {
-            throw new RuntimeException("Invalid OTP");
+            throw new AutenficacaoException("Invalid OTP");
         }
 
 
        if(userRepository.existsByEmail(req.email())) {
-           throw new RuntimeException("Email already exists");
+           throw new AutenficacaoException("Email already exists");
        }
        var password = passwordEncoder.encode(req.password());
        User user = new User(req,password);
@@ -102,15 +125,13 @@ public class AuthServiceImp implements AuthService {
 
     @Override
     public AuthResponse siging(LoginRequestDTO req) {
-        String username= req.getEmail();
-        User user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
-        if(!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid password");
-        }
+        String userOrSeller= req.getEmail();
         String otp = req.getOtp();
-        Authentication authentication = authenticate(username, otp);
-        
-        VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
+        Authentication authentication = authenticate(userOrSeller, otp);
+
+
+
+        VerificationCode verificationCode = verificationCodeRepository.findByEmail(userOrSeller);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String token = tokenService.generateToken(authentication);
         AuthResponse res = new AuthResponse();
@@ -128,14 +149,19 @@ public class AuthServiceImp implements AuthService {
     }
 
     private Authentication authenticate(String username, String otp) {
-
         UserDetails userDetails= custumerServicerImpl.loadUserByUsername(username);
-        if(userDetails == null) {
-            throw new BadCredentialsException("Invalid username or password");
+
+        String SELLER_PREFIX = "seller_";
+        if(username.startsWith(SELLER_PREFIX)) {
+            username= username.substring(SELLER_PREFIX.length());
         }
+        System.out.println("username: "+username);
+        if(userDetails == null) {
+            throw new AutenficacaoException("Invalid username or password");
+        }System.out.println("userDetails: "+userDetails);
         VerificationCode verificationCode = verificationCodeRepository.findByEmail(username);
         if(verificationCode == null || !verificationCode.getOtp().equals(otp)) {
-            throw new BadCredentialsException("Invalid OTP");
+            throw new AutenficacaoException("Invalid OTP");
         }
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }

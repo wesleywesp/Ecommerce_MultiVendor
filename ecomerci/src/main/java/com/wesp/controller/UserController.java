@@ -1,6 +1,7 @@
 package com.wesp.controller;
 
 import com.wesp.domain.USER_ROLE;
+import com.wesp.infra.exception.CustumerException;
 import com.wesp.model.User;
 import com.wesp.request.SignupRequestDTO;
 import com.wesp.response.AuthResponse;
@@ -21,7 +22,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/users/profile")
-    public ResponseEntity<UserResponseDTO> getUserbyJwttoken(@RequestHeader("Authorization") String jwtToken) {
+    public ResponseEntity<UserResponseDTO> getUserbyJwttoken(@RequestHeader("Authorization") String jwtToken) throws CustumerException {
         User user = userService.findByJwtToken(jwtToken);
         return ResponseEntity.ok(new UserResponseDTO(user.getId(), user.getPassword(), user.getEmail(), user.getName(), user.getLastName(), user.getPhone()));
 

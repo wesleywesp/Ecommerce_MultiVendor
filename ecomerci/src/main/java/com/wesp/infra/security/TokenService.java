@@ -4,7 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.wesp.model.User;
+import com.wesp.infra.exception.JwtTokenException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -41,9 +40,9 @@ public class TokenService {
                     .withExpiresAt(getExpiration())
                     .sign(algorithm);
         } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Parâmetros inválidos ao criar o token: " + e.getMessage(), e);
+            throw new JwtTokenException("Parâmetros inválidos ao criar o token: " + e.getMessage(), e);
         } catch (JWTCreationException e) {
-            throw new RuntimeException("Erro ao criar token JWT: " + e.getMessage(), e);
+            throw new JwtTokenException("Erro ao criar token JWT: " + e.getMessage(), e);
         }
 
     }
@@ -72,8 +71,8 @@ public class TokenService {
                     .verify(tokenJwt)
                     .getSubject();
 
-        } catch (JWTVerificationException exception){
-            throw new RuntimeException("Error to verify token" + exception.getMessage());
+        } catch (JWTVerificationException e){
+            throw new JwtTokenException("Error to verify token" + e.getMessage(), e);
         }
     }
 
@@ -86,8 +85,8 @@ public class TokenService {
                     .verify(token)
                     .getClaim("authorities")
                     .asString();
-        } catch (JWTVerificationException exception){
-            throw new RuntimeException("Error to verify token" + exception.getMessage());
+        } catch (JWTVerificationException e){
+            throw new JwtTokenException("Error to verify token" + e.getMessage(), e);
         }
     }
 

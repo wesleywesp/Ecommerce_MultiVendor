@@ -25,7 +25,7 @@ public record SellerRequestDTO(@NotBlank(message = "Seller name cannot be empty"
                                String password,
 
                                @NotNull(message = "Business details cannot be null")
-                               BusinessDetails businessDetails,
+                               BusinessDetailsRequestDTO businessDetails,
 
                                @NotNull(message = "Role cannot be null")
                                USER_ROLE role,

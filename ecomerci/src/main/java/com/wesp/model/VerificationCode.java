@@ -24,6 +24,8 @@ public class VerificationCode {
     @OneToOne
     @PrimaryKeyJoinColumn(name = "seller_id", referencedColumnName = "id")
     private Seller seller;
+
+
 }
 
 

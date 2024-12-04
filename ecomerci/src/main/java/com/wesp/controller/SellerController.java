@@ -2,21 +2,24 @@ package com.wesp.controller;
 
 
 import com.wesp.domain.AccountStatus;
+import com.wesp.infra.exception.SellerException;
 import com.wesp.model.Seller;
-import com.wesp.model.SellerReport;
 import com.wesp.model.VerificationCode;
 import com.wesp.repository.VerificationCodeRepository;
 import com.wesp.request.LoginRequestDTO;
 import com.wesp.request.SellerRequestDTO;
+import com.wesp.request.UpdateSellerRequestDTO;
 import com.wesp.response.AuthResponse;
 import com.wesp.service.AuthService;
 import com.wesp.service.EmailService;
 import com.wesp.service.SellerService;
 import com.wesp.util.OtpUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.AuthenticationException;
 import java.net.URI;
 import java.util.List;
 
@@ -31,19 +34,21 @@ public class SellerController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> loginSeller(@RequestBody LoginRequestDTO req) {
+    public ResponseEntity<AuthResponse> loginSeller(@RequestBody @Valid LoginRequestDTO req) throws AuthenticationException {
 
         String otp = req.getOtp();
 
+
         req.setEmail("seller_" + req.getEmail());
+        System.out.println("otp: " + otp +"email: " + req.getEmail());
         AuthResponse authResponse = authService.siging(req);
 
 
         return ResponseEntity.ok(authResponse);
     }
     //verificar ser o codigo otp esta correto e se ele existe.
-    @PatchMapping("/verify/{otp}")
-    public ResponseEntity<Seller> verifySellerEmail(@PathVariable String otp) {
+    @GetMapping("/verify/{otp}")
+    public ResponseEntity<Seller> verifySellerEmail(@PathVariable String otp) throws SellerException {
 
         VerificationCode verificationCode = verificationCodeRepository.findByOtp(otp).orElseThrow(() -> new RuntimeException("Invalid OTP"));
         if(!verificationCode.getOtp().equals(otp)) {
@@ -54,7 +59,7 @@ public class SellerController {
     }
 
     @PostMapping
-    public ResponseEntity<Seller> createSeller(@RequestBody SellerRequestDTO seller) {
+    public ResponseEntity<Seller> createSeller(@RequestBody @Valid SellerRequestDTO seller) throws SellerException {
         // Criação do novo vendedor
         Seller newSeller = sellerService.createSellerProfile(seller);
 
@@ -78,12 +83,12 @@ public class SellerController {
         return ResponseEntity.created(location).body(newSeller);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Seller> getSellerById(@PathVariable Long id) {
+    public ResponseEntity<Seller> getSellerById(@PathVariable Long id) throws SellerException {
         Seller seller = sellerService.getSellerById(id);
         return ResponseEntity.ok(seller);
     }
     @GetMapping("/profile")
-    public ResponseEntity<Seller> getSellerProfile(@RequestHeader("Authorization") String jwtToken) {
+    public ResponseEntity<Seller> getSellerProfile(@RequestHeader("Authorization") String jwtToken) throws SellerException {
         Seller seller = sellerService.getSellerProfile(jwtToken);
         return ResponseEntity.ok(seller);
     }
@@ -101,18 +106,18 @@ public class SellerController {
     }
 
     @PutMapping
-    public ResponseEntity<Seller> updateSeller(@RequestHeader("Authorization") String jwtToken, @RequestBody Seller seller) {
+    public ResponseEntity<Seller> updateSeller(@RequestHeader("Authorization") String jwtToken, @RequestBody @Valid UpdateSellerRequestDTO seller) throws SellerException {
         Seller profile = sellerService.getSellerProfile(jwtToken);
         Seller updatedSeller = sellerService.updateSeller(profile.getId(), seller);
         return ResponseEntity.ok(updatedSeller);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSeller(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSeller(@PathVariable Long id) throws SellerException {
         sellerService.desativaSeller(id);
         return ResponseEntity.noContent().build();
     }
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> desativarSeller(@PathVariable Long id) {
+    public ResponseEntity<Void> desativarSeller(@PathVariable Long id) throws SellerException {
                 sellerService.deleteSeller(id);
         return ResponseEntity.noContent().build();
     }

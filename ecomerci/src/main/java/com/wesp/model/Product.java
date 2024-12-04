@@ -78,6 +78,8 @@ public class Product {
     public void updateNumRating() {
         this.numRating = reviews.size(); // Contagem de avaliações
     }
+
+
 }
 
 

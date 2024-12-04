@@ -1,6 +1,7 @@
 package com.wesp.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wesp.request.AddressRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -34,7 +35,8 @@ public class Address {
 
     private String phone;
     @ManyToOne
-    @JoinColumn(name = "user_id") // Nome da coluna no banco de dados
+    @JoinColumn(name = "user_id")// Nome da coluna no banco de dados
+    @JsonIgnore
     private User user;
 
     public Address(AddressRequestDTO addressRequestDTO) {

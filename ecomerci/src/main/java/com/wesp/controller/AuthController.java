@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.naming.AuthenticationException;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -54,7 +56,7 @@ public class AuthController {
     }
     @PostMapping("/singning")
     @Transactional
-    public ResponseEntity<AuthResponse> loginHandler(@RequestBody LoginRequestDTO req) {
+    public ResponseEntity<AuthResponse> loginHandler(@RequestBody LoginRequestDTO req) throws AuthenticationException {
         AuthResponse res = authService.siging(req);
         return ResponseEntity.ok(res);
 

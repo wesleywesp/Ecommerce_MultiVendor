@@ -1,5 +1,6 @@
 package com.wesp.service.impl;
 
+import com.wesp.infra.exception.CustumerException;
 import com.wesp.infra.security.TokenService;
 import com.wesp.model.User;
 import com.wesp.repository.UserRepository;
@@ -18,16 +19,16 @@ public class UserServiceImpl implements UserService {
     private final TokenService tokenService;
 
     @Override
-    public User findByJwtToken(String jwtToken) {
+    public User findByJwtToken(String jwtToken) throws CustumerException {
         String email = tokenService.getSubject(jwtToken);
         User user = this.findUserByEmail(email);
         return user;
     }
 
     @Override
-    public User findUserByEmail(String email) {
+    public User findUserByEmail(String email) throws CustumerException {
 
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new BadCredentialsException("User not found with email: " + email));
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new CustumerException("User not found with email: " + email));
         return user;
     }
 }

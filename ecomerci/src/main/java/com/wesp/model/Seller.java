@@ -5,7 +5,9 @@ import com.wesp.domain.AccountStatus;
 import com.wesp.domain.USER_ROLE;
 
 import com.wesp.request.BankDetailsRequestDTO;
+import com.wesp.request.BusinessDetailsRequestDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -73,5 +75,6 @@ public class Seller {
         this.isActive = false;
         this.accountStatus = AccountStatus.DEACTIVATED;
     }
+
 }
 
