@@ -3,15 +3,14 @@ package com.wesp.model;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Data
-@EqualsAndHashCode
 @Entity
 @Table(name = "carts")
 @NoArgsConstructor
@@ -24,7 +23,7 @@ public class Cart {
     @PrimaryKeyJoinColumn(name = "user_id")
     private User user;
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CartItem> carItems = new HashSet<>();
+    private List<CartItem> carItems = new ArrayList<>();
 
     private BigDecimal totalSellingPrice;
 

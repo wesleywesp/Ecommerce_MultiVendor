@@ -52,4 +52,36 @@ public class GlobalException {
         errorDetails.setTimestamp(java.time.LocalDateTime.now());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(CartException.class)
+    public ResponseEntity<ErrorDetails> CartException(AutenficacaoException se, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(request.getDescription(false));
+        errorDetails.setError(se.getMessage());
+        errorDetails.setTimestamp(java.time.LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(OrderException.class)
+    public ResponseEntity<ErrorDetails> OrderException(AutenficacaoException se, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(request.getDescription(false));
+        errorDetails.setError(se.getMessage());
+        errorDetails.setTimestamp(java.time.LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(SellreportExecption.class)
+    public ResponseEntity<ErrorDetails> SellreportExecption(AutenficacaoException se, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(request.getDescription(false));
+        errorDetails.setError(se.getMessage());
+        errorDetails.setTimestamp(java.time.LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(PaymentException.class)
+    public ResponseEntity<ErrorDetails> PaymentException(AutenficacaoException se, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(request.getDescription(false));
+        errorDetails.setError(se.getMessage());
+        errorDetails.setTimestamp(java.time.LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
 }

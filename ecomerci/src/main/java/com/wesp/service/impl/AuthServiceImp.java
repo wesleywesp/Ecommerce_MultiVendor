@@ -57,24 +57,23 @@ public class AuthServiceImp implements AuthService {
             email = email.substring(SIGNIN_PREFIX.length());
         }
 
-        // Verificar se o usuário ou vendedor existe
-        boolean userExists;
+        // Verificar existência do usuário/vendedor (mas sem lançar erro)
+        boolean userExists = false;
         if (role.equals(USER_ROLE.ROLE_SELLER)) {
             userExists = sellerRepository.findByEmail(email).isPresent();
-            if (!userExists) {
-                throw new AutenficacaoException("Seller not found with email: " + email);
-            }
         } else {
             userExists = userRepository.findByEmail(email).isPresent();
-            if (!userExists) {
-                throw new AutenficacaoException("User not found with email: " + email);
-            }
+        }
+
+        // Registro opcional para logs (não necessário, mas útil para monitoramento)
+        if (!userExists) {
+            System.out.println("No user/seller found with email: " + email + ". Proceeding to create OTP.");
         }
 
         // Substituir código de verificação existente, se necessário
-       VerificationCode isExist= verificationCodeRepository.findByEmail(email);
-        if(isExist != null) {
-            verificationCodeRepository.delete(isExist);
+        VerificationCode existingCode = verificationCodeRepository.findByEmail(email);
+        if (existingCode != null) {
+            verificationCodeRepository.delete(existingCode);
         }
 
         // Gerar novo OTP e salvar no banco
@@ -91,6 +90,7 @@ public class AuthServiceImp implements AuthService {
         // Enviar OTP via email
         emailService.sendVerificationOtpEmail(email, otp, subject, text);
     }
+
 
 
     @Override

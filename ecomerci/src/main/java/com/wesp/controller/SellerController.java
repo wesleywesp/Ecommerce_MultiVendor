@@ -4,6 +4,7 @@ package com.wesp.controller;
 import com.wesp.domain.AccountStatus;
 import com.wesp.infra.exception.SellerException;
 import com.wesp.model.Seller;
+import com.wesp.model.SellerReport;
 import com.wesp.model.VerificationCode;
 import com.wesp.repository.VerificationCodeRepository;
 import com.wesp.request.LoginRequestDTO;
@@ -12,6 +13,7 @@ import com.wesp.request.UpdateSellerRequestDTO;
 import com.wesp.response.AuthResponse;
 import com.wesp.service.AuthService;
 import com.wesp.service.EmailService;
+import com.wesp.service.SellerReportService;
 import com.wesp.service.SellerService;
 import com.wesp.util.OtpUtil;
 import jakarta.validation.Valid;
@@ -31,6 +33,7 @@ public class SellerController {
     private final VerificationCodeRepository verificationCodeRepository;
     private final AuthService authService;
     private final EmailService emailService;
+    private final SellerReportService sellerReportService;
 
 
     @PostMapping("/login")
@@ -93,11 +96,12 @@ public class SellerController {
         return ResponseEntity.ok(seller);
     }
 
-//    @GetMapping("/report")
-//    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwtToken) {
-//        SellerReport sellerReport = sellerService.getSellerReport(jwtToken);
-//        return ResponseEntity.ok(sellerReport);
-//    }
+    @GetMapping("/report")
+    public ResponseEntity<SellerReport> getSellerReport(@RequestHeader("Authorization") String jwtToken) throws SellerException {
+        Seller seller = sellerService.getSellerProfile(jwtToken);
+        SellerReport sellerReport = sellerReportService.getSellerReport(seller);
+        return ResponseEntity.ok(sellerReport);
+    }
 
     @GetMapping
     public ResponseEntity<List<Seller>> getAllSellers(@RequestParam(required = false) AccountStatus status) {

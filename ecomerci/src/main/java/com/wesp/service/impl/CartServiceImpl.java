@@ -7,7 +7,6 @@ import com.wesp.model.User;
 import com.wesp.repository.CartItemRepository;
 import com.wesp.repository.CartRepository;
 import com.wesp.service.CartService;
-import com.wesp.service.ProductService;
 import com.wesp.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,6 +39,7 @@ public class CartServiceImpl implements CartService{
 
             BigDecimal totalPrice = product.getSellingPrice().multiply(BigDecimal.valueOf(quantity));
             cartItem.setSellingPrice(totalPrice);
+            cartItem.setMrpPrice(product.getMrpPrice().multiply(BigDecimal.valueOf(quantity)));
 
 
             cartItem.setCart(cart);
@@ -71,7 +71,7 @@ public class CartServiceImpl implements CartService{
 
     private BigDecimal calculateDiscountPercentage(BigDecimal sellingPrice, BigDecimal mrpPrice) {
         if (mrpPrice.compareTo(BigDecimal.ZERO) == 0) {
-            throw new IllegalArgumentException("MRP price cannot be zero");
+            return BigDecimal.ZERO;
         }
         // Definir precisão e modo de arredondamento
         return mrpPrice.subtract(sellingPrice)

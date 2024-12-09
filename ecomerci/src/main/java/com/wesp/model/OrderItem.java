@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 
 @Data
 @EqualsAndHashCode
@@ -25,7 +27,7 @@ public class OrderItem {
     private Product product;
     private String size;
     private Integer quantity;
-    private Integer mrpPrice;
-    private Integer sellingPrice;
+    private BigDecimal mrpPrice;
+    private BigDecimal sellingPrice;
     private Long userId;
 }
