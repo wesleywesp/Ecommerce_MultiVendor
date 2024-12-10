@@ -22,6 +22,7 @@ public class PaymentController {
     private final SellerService sellerService;
     private final OrderService orderService;
     private final SellerReportService sellerReportService;
+    private final TransactionService transactionService;
 
     @GetMapping("/{paymentId}")
     public ResponseEntity<?> paymentSucessoHandler(@PathVariable String paymentId,
@@ -34,7 +35,7 @@ public class PaymentController {
 
         if (paymentSuccess) {
             for (Order order : paymentOrder.getOrder()) {
-//                transactionService.createTransaction(order, user);
+                transactionService.createTransaction(order);
                 Seller seller = sellerService.getSellerById(order.getSellerId());
                 SellerReport sellerReport = sellerReportService.getSellerReport(seller);
                 sellerReport.setTotalOrders(sellerReport.getTotalOrders() + 1);

@@ -84,4 +84,21 @@ public class GlobalException {
         errorDetails.setTimestamp(java.time.LocalDateTime.now());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(ReviewException.class)
+    public ResponseEntity<ErrorDetails> ReviewException(AutenficacaoException se, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(request.getDescription(false));
+        errorDetails.setError(se.getMessage());
+        errorDetails.setTimestamp(java.time.LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(CouponException.class)
+    public ResponseEntity<ErrorDetails> CouponException(AutenficacaoException se, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(request.getDescription(false));
+        errorDetails.setError(se.getMessage());
+        errorDetails.setTimestamp(java.time.LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
 }
