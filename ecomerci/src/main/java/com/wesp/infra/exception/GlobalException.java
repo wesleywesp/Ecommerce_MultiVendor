@@ -100,5 +100,21 @@ public class GlobalException {
         errorDetails.setTimestamp(java.time.LocalDateTime.now());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(HomeCategoryException.class)
+    public ResponseEntity<ErrorDetails> HomeCategoryException(AutenficacaoException se, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(request.getDescription(false));
+        errorDetails.setError(se.getMessage());
+        errorDetails.setTimestamp(java.time.LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(DealException.class)
+    public ResponseEntity<ErrorDetails> DealException(AutenficacaoException se, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        errorDetails.setDetails(request.getDescription(false));
+        errorDetails.setError(se.getMessage());
+        errorDetails.setTimestamp(java.time.LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
 
 }
